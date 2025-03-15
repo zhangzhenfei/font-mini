@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest, windows-latest]
 
     steps:
       - name: 检出代码
@@ -42,12 +42,6 @@ jobs:
         run: |
           pip install setuptools
 
-      # 在Linux上安装必要的依赖
-      - name: 安装Linux依赖（Linux）
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libxkbfile-dev libxkbfile1 libgtk-3-0 libxss1 libnss3
 
       - name: 安装依赖
         run: npm ci
@@ -80,11 +74,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 构建并发布应用 (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: npm run build:linux -- --publish=always
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       # 确保所有构建文件都被上传到GitHub Releases
       - name: 上传构建文件到GitHub Releases
