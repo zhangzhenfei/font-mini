@@ -9,6 +9,9 @@ import log from 'electron-log'
 // 配置日志
 log.transports.file.level = 'info'
 log.transports.console.level = 'info'
+// 设置控制台输出编码为UTF-8
+log.transports.console.format = '[{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}'
+log.transports.console.useStyles = true
 
 // 替换控制台日志，确保所有日志都会写入到文件
 console.log = log.info

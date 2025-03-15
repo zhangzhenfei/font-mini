@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: 检出代码
@@ -42,8 +42,23 @@ jobs:
         run: |
           pip install setuptools
 
+      # 在Linux上安装必要的依赖
+      - name: 安装Linux依赖（Linux）
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxkbfile-dev libxkbfile1 libgconf-2-4 libgnome-keyring-dev libgtk-3-0 libxss1 libnss3 libasound2
+
       - name: 安装依赖
         run: npm ci
+
+      # 修复Linux app-builder执行权限
+      - name: 修复app-builder权限（Linux）
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          if [ -f "node_modules/app-builder-bin/linux/x64/app-builder" ]; then
+            chmod +x node_modules/app-builder-bin/linux/x64/app-builder
+          fi
 
       - name: 构建应用
         run: npm run build
@@ -52,15 +67,39 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           # 首先构建 x64 版本
-          npm run build:mac
+          npm run build:mac -- --publish always
           # 然后构建 arm64 版本 (可选，取决于是否需要支持 Apple Silicon)
-          # npm run build:mac -- --arm64
+          # npm run build:mac -- --arm64 --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: 构建并发布应用 (Windows)
         if: matrix.os == 'windows-latest'
-        run: npm run build:win
+        run: npm run build:win -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 构建并发布应用 (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run build:linux -- --publish always
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      # 确保所有构建文件都被上传到GitHub Releases
+      - name: 上传构建文件到GitHub Releases
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            dist/*.exe
+            dist/*.dmg
+            dist/*.AppImage
+            dist/*.snap
+            dist/*.deb
+            dist/*.rpm
+            dist/*.zip
+            dist/*.tar.gz
+            dist/*.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
