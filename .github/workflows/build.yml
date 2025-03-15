@@ -67,22 +67,22 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: |
           # 首先构建 x64 版本
-          npm run build:mac -- --publish always
+          npm run build:mac -- --publish=always
           # 然后构建 arm64 版本 (可选，取决于是否需要支持 Apple Silicon)
-          # npm run build:mac -- --arm64 --publish always
+          # npm run build:mac -- --arm64 --publish=always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: 构建并发布应用 (Windows)
         if: matrix.os == 'windows-latest'
-        run: npm run build:win -- --publish always
+        run: npm run build:win -- --publish=always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 构建并发布应用 (Linux)
         if: matrix.os == 'ubuntu-latest'
-        run: npm run build:linux -- --publish always
+        run: npm run build:linux -- --publish=always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
