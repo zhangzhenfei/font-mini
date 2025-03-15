@@ -396,7 +396,6 @@ const processFont = async (): Promise<void> => {
 
     if (res.success) {
       // 转换返回结果为所需类型
-      const originalFileName = fontFile.value.name
       const newFileName = res.path.split('/').pop() || res.path.split('\\').pop() || ''
       const stats = await window.electronAPI.getFileStats(res.path)
 
