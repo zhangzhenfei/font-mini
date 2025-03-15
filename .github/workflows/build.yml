@@ -42,8 +42,24 @@ jobs:
         run: |
           pip install setuptools
 
+      # 在Linux上安装必要的依赖
+      - name: 安装Linux依赖（Linux）
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxkbfile-dev libxkbfile1 libgconf-2-4 libgnome-keyring-dev libgtk-3-0 libxss1 libnss3 libasound2
+          sudo chmod +x node_modules/app-builder-bin/linux/x64/app-builder
+
       - name: 安装依赖
         run: npm ci
+
+      # 修复Linux app-builder执行权限
+      - name: 修复app-builder权限（Linux）
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          if [ -f "node_modules/app-builder-bin/linux/x64/app-builder" ]; then
+            chmod +x node_modules/app-builder-bin/linux/x64/app-builder
+          fi
 
       - name: 构建应用
         run: npm run build
