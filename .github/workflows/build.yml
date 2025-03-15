@@ -29,6 +29,19 @@ jobs:
           node-version: 23
           cache: 'npm'
 
+      # 为macOS设置适当的Python环境
+      - name: 设置Python环境（macOS）
+        if: matrix.os == 'macos-latest'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # 在macOS上安装必要的Python依赖
+      - name: 安装Python依赖（macOS）
+        if: matrix.os == 'macos-latest'
+        run: |
+          pip install setuptools
+
       - name: 安装依赖
         run: npm ci
 
