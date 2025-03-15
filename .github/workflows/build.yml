@@ -47,7 +47,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libxkbfile-dev libxkbfile1 libgtk-3-0 libxss1 libnss3 libasound2
+          sudo apt-get install -y libxkbfile-dev libxkbfile1 libgtk-3-0 libxss1 libnss3
 
       - name: 安装依赖
         run: npm ci
