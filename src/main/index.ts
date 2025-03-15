@@ -25,7 +25,7 @@ const loadFontmin = async (): Promise<void> => {
   try {
     const fontminModule = await import('fontmin')
     fontmin = fontminModule.default || fontminModule
-    console.log('fontmin模块加载成功')
+    console.log('fontmin加载成功')
   } catch (error: unknown) {
     const err = error as Error
     console.error('fontmin模块加载失败:', err)
